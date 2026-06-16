@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杭州房价分析报告 2025-2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 28px; margin: 30px 0 10px; color: #1a1a2e; }
+.subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 30px; }
+
+.card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.card h2 { font-size: 20px; margin-bottom: 16px; color: #1a1a2e; border-left: 4px solid #4361ee; padding-left: 12px; }
+
+/* 关键指标 */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.metric { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; color: white; text-align: center; }
+.metric:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.metric:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.metric:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.metric .value { font-size: 28px; font-weight: bold; margin: 8px 0; }
+.metric .label { font-size: 13px; opacity: 0.9; }
+.metric .change { font-size: 14px; margin-top: 4px; }
+
+/* 图表容器 */
+.chart-container { position: relative; height: 400px; margin: 20px 0; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+
+/* 区域表格 */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th { background: #f0f2f5; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 14px; }
+td { padding: 10px 16px; border-bottom: 1px solid #eee; font-size: 14px; }
+tr:hover { background: #f8f9ff; }
+.up { color: #f5222d; font-weight: 600; }
+.down { color: #52c41a; font-weight: 600; }
+.rank { display: inline-block; width: 24px; height: 24px; line-height: 24px; text-align: center; border-radius: 50%; font-size: 12px; font-weight: bold; color: white; }
+.rank-1 { background: #f5222d; }
+.rank-2 { background: #fa541c; }
+.rank-3 { background: #fa8c16; }
+.rank-other { background: #bfbfbf; }
+
+/* 板块分层 */
+.tier { display: flex; gap: 16px; margin: 16px 0; flex-wrap: wrap; }
+.tier-item { flex: 1; min-width: 180px; border-radius: 12px; padding: 16px; text-align: center; color: white; }
+.tier-item .tier-name { font-size: 14px; font-weight: bold; margin-bottom: 8px; }
+.tier-item .tier-price { font-size: 22px; font-weight: bold; }
+.tier-item .tier-range { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+.tier-1 { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+.tier-2 { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+.tier-3 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.tier-4 { background: linear-gradient(135deg, #f7971e, #ffd200); }
+.tier-5 { background: linear-gradient(135deg, #8e2de2, #4a00e0); }
+
+/* 分析文本 */
+.analysis { background: #f8f9ff; border-radius: 12px; padding: 20px; margin: 16px 0; border-left: 4px solid #4361ee; }
+.analysis p { margin-bottom: 8px; }
+.highlight-red { color: #f5222d; font-weight: 600; }
+.highlight-green { color: #52c41a; font-weight: 600; }
+.highlight-blue { color: #1890ff; font-weight: 600; }
+
+/* 走势时间线 */
+.timeline { padding: 16px 0; }
+.timeline-item { display: flex; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #eee; }
+.timeline-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.timeline-content h4 { font-size: 15px; margin-bottom: 4px; }
+.timeline-content p { font-size: 13px; color: #666; }
+
+.footer { text-align: center; color: #999; font-size: 12px; padding: 30px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🏠 杭州房价分析报告</h1>
+<p class="subtitle">数据截至 2026年6月 | 来源：中国房价行情、安居客、吉屋网、Numbeo、行业分析</p>
+
+<!-- 关键指标 -->
+<div class="card">
+<h2>📊 全市关键指标</h2>
+<div class="metrics">
+  <div class="metric">
+    <div class="label">全市均价（挂牌）</div>
+    <div class="value">32,936</div>
+    <div class="label">元/㎡</div>
+    <div class="change">环比 ▼1.56%</div>
+  </div>
+  <div class="metric">
+    <div class="label">新房均价</div>
+    <div class="value">21,373</div>
+    <div class="label">元/㎡（2026.6）</div>
+    <div class="change">环比 ↑0.25%</div>
+  </div>
+  <div class="metric">
+    <div class="label">二手房均价</div>
+    <div class="value">30,108</div>
+    <div class="label">元/㎡</div>
+    <div class="change">环比 ▼1.21%</div>
+  </div>
+  <div class="metric">
+    <div class="label">平均总价</div>
+    <div class="value">392</div>
+    <div class="label">万元/套</div>
+    <div class="change">在售 3,735套</div>
+  </div>
+</div>
+</div>
+
+<!-- 各区房价排行 -->
+<div class="card">
+<h2>🏙️ 各区县房价排行（2026年5月挂牌）</h2>
+<table>
+<thead>
+<tr><th>排名</th><th>行政区</th><th>均价（元/㎡）</th><th>环比涨跌</th><th>板块定位</th></tr>
+</thead>
+<tbody>
+<tr><td><span class="rank rank-1">1</span></td><td>西湖区</td><td><span class="up">46,235</span></td><td class="up">+0.54%</td><td>核心学区/西湖景观</td></tr>
+<tr><td><span class="rank rank-2">2</span></td><td>滨江区</td><td><span class="down">40,786</span></td><td class="down">-9.63%</td><td>科技产业/奥体</td></tr>
+<tr><td><span class="rank rank-3">3</span></td><td>上城区</td><td><span class="down">40,002</span></td><td class="down">-2.08%</td><td>老城核心/望江新城</td></tr>
+<tr><td><span class="rank rank-other">4</span></td><td>拱墅区</td><td><span class="down">37,046</span></td><td class="down">-0.11%</td><td>运河新城/大城北</td></tr>
+<tr><td><span class="rank rank-other">5</span></td><td>萧山区</td><td><span class="down">30,445</span></td><td class="down">-9.80%</td><td>钱江世纪城/萧山新城</td></tr>
+<tr><td><span class="rank rank-other">6</span></td><td>余杭区</td><td><span class="down">27,391</span></td><td class="down">-4.97%</td><td>未来科技城/城西</td></tr>
+<tr><td><span class="rank rank-other">7</span></td><td>钱塘区</td><td><span class="up">23,969</span></td><td class="up">+2.60%</td><td>下沙/大江东</td></tr>
+<tr><td><span class="rank rank-other">8</span></td><td>富阳区</td><td><span class="down">21,450</span></td><td class="down">-2.98%</td><td>银湖/富春湾</td></tr>
+<tr><td><span class="rank rank-other">9</span></td><td>临平区</td><td><span class="up">19,310</span></td><td class="up">+2.02%</td><td>临平新城/超山</td></tr>
+<tr><td><span class="rank rank-other">10</span></td><td>临安区</td><td><span class="down">12,995</span></td><td class="down">-4.55%</td><td>青山湖科技城</td></tr>
+<tr><td><span class="rank rank-other">11</span></td><td>桐庐县</td><td><span class="down">11,998</span></td><td class="down">-6.11%</td><td>远郊县城</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- 房价柱状图 -->
+<div class="card">
+<h2>📊 各区房价对比（元/㎡）</h2>
+<div class="chart-container">
+<canvas id="districtChart"></canvas>
+</div>
+</div>
+
+<!-- 板块分层 -->
+<div class="card">
+<h2>🏗️ 板块价格分层（2026年）</h2>
+<div class="tier">
+  <div class="tier-item tier-1">
+    <div class="tier-name">🔴 核心板块</div>
+    <div class="tier-price">40,000+</div>
+    <div class="tier-range">西湖、滨江、上城核心</div>
+  </div>
+  <div class="tier-item tier-2">
+    <div class="tier-name">🟣 次核心板块</div>
+    <div class="tier-price">30,000-40,000</div>
+    <div class="tier-range">拱墅、萧山核心</div>
+  </div>
+  <div class="tier-item tier-3">
+    <div class="tier-name">🟢 发展板块</div>
+    <div class="tier-price">20,000-30,000</div>
+    <div class="tier-range">余杭、钱塘、富阳</div>
+  </div>
+  <div class="tier-item tier-4">
+    <div class="tier-name">🟡 新兴板块</div>
+    <div class="tier-price">15,000-20,000</div>
+    <div class="tier-range">临平、临安</div>
+  </div>
+  <div class="tier-item tier-5">
+    <div class="tier-name">🟣 远郊板块</div>
+    <div class="tier-price">&lt;15,000</div>
+    <div class="tier-range">桐庐、建德、淳安</div>
+  </div>
+</div>
+</div>
+
+<!-- 涨跌对比图 -->
+<div class="card">
+<h2>📈 各区环比涨跌对比</h2>
+<div class="chart-container">
+<canvas id="changeChart"></canvas>
+</div>
+</div>
+
+<!-- 走势时间线 -->
+<div class="card">
+<h2>📅 近期走势时间线</h2>
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#1890ff"></div>
+    <div class="timeline-content">
+      <h4>2026年6月 — 新房微涨，二手房承压</h4>
+      <p>新房均价21,323元/㎡，环比+0.25%；二手房均价30,108元/㎡，环比-1.21%。市场分化明显，核心区域新房有支撑，二手房以价换量。</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#52c41a"></div>
+    <div class="timeline-content">
+      <h4>2026年5月 — 全市挂牌均价32,936元/㎡，环比-1.56%</h4>
+      <p>挂牌量3,735套，售租比51。滨江区环比大跌-9.63%，萧山区-9.80%，仅西湖、钱塘、临平微涨。</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#fa8c16"></div>
+      <div class="timeline-content">
+      <h4>2025年下半年 — 政策松绑，市场缓慢修复</h4>
+      <p>杭州出台多项利好政策（限购松绑、房贷利率下调、购房补贴等），二手房成交量首次超过新房，"以价换量"成为主旋律。</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#f5222d"></div>
+    <div class="timeline-content">
+      <h4>2025年初 — 调整延续，部分区域跌幅显著</h4>
+      <p>2025年2月数据显示滨江区47,668元/㎡（后回调），西湖区46,899元/㎡，上城区45,915元/㎡。市场整体处于调整通道。</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#722ed1"></div>
+    <div class="timeline-content">
+      <h4>2024年 — 高位回落，分化加剧</h4>
+      <p>2024年12月新房均价排名：上城区37,900、滨江区33,866、西湖区28,995、余杭区25,290、拱墅区25,723。相比2022年高点（全市均价33,669元/㎡）已明显回落。</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 分析总结 -->
+<div class="card">
+<h2>🔍 市场分析</h2>
+
+<div class="analysis">
+<p><strong>1. 整体态势：高位调整，分化加剧</strong></p>
+<p>杭州房价自2022年高点（CEIC数据显示33,669元/㎡）以来持续调整。2026年5月全市挂牌均价<span class="highlight-blue">32,936元/㎡</span>，仍处历史较高水平，但较峰值已回落约<span class="highlight-red">2.2%</span>。</p>
+</div>
+
+<div class="analysis">
+<p><strong>2. 区域分化：核心坚挺，外围承压</strong></p>
+<p><span class="highlight-red">西湖区（46,235元/㎡）</span>逆势微涨+0.54%，学区房和西湖景观资源提供强支撑。<span class="highlight-green">滨江区（-9.63%）</span>和<span class="highlight-green">萧山区（-9.80%）</span>跌幅最大，前期涨幅过大、投资客集中是主因。<span class="highlight-blue">钱塘区（+2.60%）</span>和<span class="highlight-blue">临平区（+2.02%）</span>因价格基数低、产业导入而微涨。</p>
+</div>
+
+<div class="analysis">
+<p><strong>3. 新房 vs 二手房：冰火两重天</strong></p>
+p>新房均价21,373元/㎡，二手房均价30,108元/㎡，<span class="highlight-red">二手房比新房贵41%</span>。这一反常现象反映：①新房限价政策导致价格失真；②二手房集中在核心区域，拉高均价；③新房多在外围板块。</p>
+</div>
+
+<div class="analysis">
+<p><strong>4. 国际对比：杭州房价收入比19.3</strong></p>
+<p>据Numbeo数据，杭州<span class="highlight-red">房价收入比19.3</span>，房贷收入比134.17%，租房回报率仅<span class="highlight-blue">1.77%-2.08%</span>。按国际标准，杭州房价严重偏高，但作为中国"新一线城市"龙头之一，溢价有其产业和人才支撑。</p>
+</div>
+
+<div class="analysis">
+<p><strong>5. 未来展望：稳中偏弱，结构性机会</strong></p>
+<p>短期看，杭州房价预计维持<span class="highlight-blue">"稳中有降"</span>态势。核心板块（西湖、上城望江新城、滨江奥体）抗跌性强；外围板块（萧山、余杭、临安）仍有一定调整空间。政策面持续宽松，但"房住不炒"基调不变，暴涨概率极低。</p>
+</div>
+</div>
+
+<!-- 雷达图 -->
+<div class="card">
+<h2>🎯 各区域综合评估</h2>
+<div class="chart-row">
+  <div class="chart-container" style="height:350px">
+    <canvas id="radarChart"></canvas>
+  </div>
+  <div style="padding:20px; font-size:14px; color:#666;">
+    <p style="margin-bottom:12px"><strong>评估维度说明：</strong></p>
+    <p>📍 <strong>价格水平</strong>：当前均价高低</p>
+    <p>📈 <strong>价格韧性</strong>：环比涨跌稳定性</p>
+    <p>🏫 <strong>教育资源</strong>：学区质量</p>
+    <p>💼 <strong>产业支撑</strong>：就业机会</p>
+    <p>🚇 <strong>交通便利</strong>：地铁覆盖</p>
+    <p>💰 <strong>投资价值</strong>：增值潜力</p>
+  </div>
+</div>
+</div>
+
+<div class="footer">
+<p>数据来源：中国房价行情(creprice.cn)、安居客、吉屋网、Numbeo、CEIC、行业分析</p>
+<p>报告生成时间：2026年6月 | 仅供参考，不构成投资建议</p>
+</div>
+
+</div>
+
+<script>
+// 各区房价柱状图
+const districtCtx = document.getElementById('districtChart').getContext('2d');
+new Chart(districtCtx, {
+  type: 'bar',
+  data: {
+    labels: ['西湖区','滨江区','上城区','拱墅区','萧山区','余杭区','钱塘区','富阳区','临平区','临安区','桐庐县'],
+    datasets: [{
+      label: '均价（元/㎡）',
+      data: [46235, 40786, 40002, 37046, 30445, 27391, 23969, 21450, 19310, 12995, 11998],
+      backgroundColor: [
+        'rgba(245,34,45,0.8)','rgba(250,84,28,0.8)','rgba(250,140,22,0.8)',
+        'rgba(250,200,85,0.8)','rgba(82,196,26,0.7)','rgba(19,199,224,0.7)',
+        'rgba(24,144,255,0.7)','rgba(54,207,201,0.7)','rgba(114,46,209,0.7)',
+        'rgba(146,84,222,0.7)','rgba(191,191,191,0.7)'
+      ],
+      borderRadius: 6,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.parsed.y.toLocaleString() + ' 元/㎡'
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { callback: v => (v/1000).toFixed(0) + 'k' }
+      }
+    }
+  }
+});
+
+// 涨跌对比图
+const changeCtx = document.getElementById('changeChart').getContext('2d');
+new Chart(changeCtx, {
+  type: 'bar',
+  data: {
+    labels: ['西湖区','滨江区','上城区','拱墅区','萧山区','余杭区','钱塘区','富阳区','临平区','临安区','桐庐县'],
+    datasets: [{
+      label: '环比涨跌（%）',
+      data: [0.54, -9.63, -2.08, -0.11, -9.80, -4.97, 2.60, -2.98, 2.02, -4.55, -6.11],
+      backgroundColor: ctx => ctx.raw >= 0 ? 'rgba(245,34,45,0.8)' : 'rgba(82,196,26,0.8)',
+      borderRadius: 6,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(2) + '%'
+        }
+      }
+    },
+    scales: {
+      y: {
+        ticks: { callback: v => v + '%' }
+      }
+    }
+  }
+});
+
+// 雷达图
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['价格水平','价格韧性','教育资源','产业支撑','交通便利','投资价值'],
+    datasets: [
+      {
+        label: '西湖区',
+        data: [95, 85, 95, 70, 85, 80],
+        borderColor: 'rgba(245,34,45,0.8)',
+        backgroundColor: 'rgba(245,34,45,0.15)',
+        pointRadius: 3
+      },
+      {
+        label: '滨江区',
+        data: [85, 40, 60, 95, 75, 70],
+        borderColor: 'rgba(24,144,255,0.8)',
+        backgroundColor: 'rgba(24,144,255,0.15)',
+        pointRadius: 3
+      },
+      {
+        label: '上城区',
+        data: [82, 55, 80, 75, 90, 75],
+        borderColor: 'rgba(250,140,22,0.8)',
+        backgroundColor: 'rgba(250,140,22,0.15)',
+        pointRadius: 3
+      },
+      {
+        label: '余杭区',
+        data: [55, 45, 50, 85, 60, 65],
+        borderColor: 'rgba(82,196,26,0.8)',
+        backgroundColor: 'rgba(82,196,26,0.15)',
+        pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        ticks: { stepSize: 20 }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
